@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>TODO List</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" ></script>
+    <script type="text/javascript">
+        $(document).ready (function() {
+            $.ajax({
+                type: "GET",
+                url: 'http://localhost:8086/TODO/done',
+                dataType: "json"
+            }).done(function(data) {
+                for (let i = 0; i < data.length; i++) {
+                    addRow(data[i]);
+                }
+            }).fail(function () {
+                alert("При выполнении запроса произошла ошибка :(");
+            })
+        });
+    </script>
+    <script>
+        function validate() {
+            const description = $('#description');
+            if (description.val() === '') {
+                alert("Введите описание задачи!");
+                return false;
+            }
+            return true;
+        }
+    </script>
+    <script>
+        function addRow(task) {
+            const date = new Date(task.created);
+            const createdData = date.getDate()+'-'+(date.getMonth()+1)+'-'+date.getFullYear()+' '
+                +date.getHours()+':'+date.getMinutes();
+            let resolved = task.done === true ? "checked" : "";
+            $('#table tr:last').after('<tr><td>' + task.description + '</td>'
+                + '<td>' + createdData + '</td>'
+                + '<td>' + '<input class="checkbox" style="color: slateblue" type="checkbox" id="' + task.id
+                + '" name="done" onchange="changeDone(' + task.id + ')"' + resolved + '>'
+                + '<label></label>'
+                + '</td></tr>');
+        }
+    </script>
+    <script type="text/javascript">
+        function changeDone(id) {
+            $.ajax({
+                type: 'POST',
+                url: 'http://localhost:8086/TODO/done',
+                data: {id: id, check: $('#' + id).is(":checked")},
+                dataType: 'json'
+            }).done(function (data) {
+                if (data.done === true) {
+                    alert("Задача '" + data.description + "' перенесена в выполненные");
+                } else {
+                    alert("Задача '" + data.description + "' удалена из выполненных");
+                }
+            }).fail(function () {
+                alert("При выполнении запроса произошла ошибка :(");
+            });
+        }
+    </script>
+    <script type="text/javascript">
+        function allTasks() {
+            const rows = $('#table tr');
+            rows.slice(1, rows.length).remove();
+            if ($('#noDoneTasks').is(":checked")) {
+                $.ajax({
+                    type: 'GET',
+                    url: 'http://localhost:8086/TODO/tasks',
+                    dataType: 'json'
+                }).done(function (data) {
+                    for (let i = 0; i < data.length; i++) {
+                        addRow(data[i]);
+                    }
+                }).fail(function () {
+                    alert("При выполнении запроса произошла ошибка :(");
+                });
+           }
+            else {
+                $.ajax({
+                    type: 'GET',
+                    url: 'http://localhost:8086/TODO/done',
+                    dataType: 'json'
+                }).done(function (data) {
+                    for (let i = 0; i < data.length; i++) {
+                        addRow(data[i]);
+                    }
+                }).fail(function () {
+                    alert("При выполнении запроса произошла ошибка :(");
+                });
+            }
+        }
+    </script>
+    <script type="text/javascript">
+        function addToList() {
+            if (validate()) {
+                $.ajax({
+                    type: 'POST',
+                    url: 'http://localhost:8086/TODO/tasks',
+                    data: { description : $('#description').val() },
+                    dataType: 'json'
+                }).done(function(data) {
+                    addRow(data);
+                    $('#description').val("");
+                }).fail(function(){
+                    $( "form h4" ).first().after('<h3>' + "Что-то пошло не так, попробуйте еще раз " + "!" +'</h3>');
+                })
+            }
+        }
+    </script>
+</head>
+<body>
+<div class="container">
+    <h4 style="color:DodgerBlue;">Новая задача</h4>
+    <form class="form-horizontal">
+        <div class="form-group">
+            <label style="text-align:left;" class="control-label col-sm-2" for="description">Описание:</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="description" title="Описание" placeholder="Введите описание задачи...">
+            </div>
+        </div>
+        <button style="margin-left:200px; color: dodgerblue; background-color: aliceblue; border-bottom-color: dodgerblue;"
+                type="button" class="btn btn-primary" onclick="addToList();">Добавить в список</button>
+    </form>
+</div>
+<div class="container">
+    <h4 style="margin-top:60px; color: SlateBlue;">Задачи к выполнению:</h4>
+    <label class="container" style="color: slateblue; margin-left: 900px; margin-bottom: 40px">Показать все
+        <input class="checkbox" type="checkbox" id="noDoneTasks" name="noDoneTasks" onchange="allTasks()">
+    </label>
+    <table class="table" id="table">
+        <thead>
+        <tr>
+            <th>Описание</th>
+            <th>Дата создания</th>
+            <th>Выполнена</th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
