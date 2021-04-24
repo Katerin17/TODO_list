@@ -3,11 +3,14 @@ package main.todo.store;
 import main.todo.model.Task;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 
+import java.io.Serializable;
 import java.util.List;
+import java.util.function.Function;
 
 public class TaskStore implements AutoCloseable {
 
@@ -16,13 +19,17 @@ public class TaskStore implements AutoCloseable {
     private final SessionFactory sf = new MetadataSources(registry)
             .buildMetadata().buildSessionFactory();
 
-    public Task add(Task task) {
+    private <T> T wrapperTransaction(final Function<Session, T> command) {
         try (Session session = sf.openSession()) {
-            session.beginTransaction();
-            session.save(task);
-            session.getTransaction().commit();
+            final Transaction transaction = session.beginTransaction();
+            T result = command.apply(session);
+            transaction.commit();
+            return result;
         }
-        return task;
+    }
+
+    public Serializable add(Task task) {
+        return this.wrapperTransaction(session -> session.save(task));
     }
 
     public void update(Task task) {
@@ -34,33 +41,15 @@ public class TaskStore implements AutoCloseable {
     }
 
     public Task findById(int id) {
-        Task result;
-        try (Session session = sf.openSession()) {
-            session.beginTransaction();
-            result = session.get(Task.class, id);
-            session.getTransaction().commit();
-        }
-        return result;
+        return this.wrapperTransaction(session -> session.get(Task.class, id));
     }
 
     public List<Task> findAll() {
-        List<Task> result;
-        try (Session session = sf.openSession()) {
-            session.beginTransaction();
-            result = session.createQuery("from main.todo.model.Task", Task.class).list();
-            session.getTransaction().commit();
-        }
-        return result;
+        return this.wrapperTransaction(session -> session.createQuery("from main.todo.model.Task", Task.class).list());
     }
 
     public List<Task> findNoDone() {
-        List<Task> result;
-        try (Session session = sf.openSession()) {
-            session.beginTransaction();
-            result = session.createQuery("from main.todo.model.Task where done = false", Task.class).list();
-            session.getTransaction().commit();
-        }
-        return result;
+        return this.wrapperTransaction(session -> session.createQuery("from main.todo.model.Task where done = false", Task.class).list());
     }
 
     @Override
