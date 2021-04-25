@@ -8,7 +8,6 @@ import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.function.Function;
 
@@ -20,16 +19,21 @@ public class TaskStore implements AutoCloseable {
             .buildMetadata().buildSessionFactory();
 
     private <T> T wrapperTransaction(final Function<Session, T> command) {
-        try (Session session = sf.openSession()) {
+        final Session session = sf.openSession();
+        try (session) {
             final Transaction transaction = session.beginTransaction();
             T result = command.apply(session);
             transaction.commit();
             return result;
+        } catch (final Exception e) {
+            session.getTransaction().rollback();
+            throw e;
         }
     }
 
-    public Serializable add(Task task) {
-        return this.wrapperTransaction(session -> session.save(task));
+    public Task add(Task task) {
+        this.wrapperTransaction(session -> session.save(task));
+        return task;
     }
 
     public void update(Task task) {
