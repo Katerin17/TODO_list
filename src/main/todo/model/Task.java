@@ -5,7 +5,7 @@ import java.sql.Timestamp;
 import java.util.Objects;
 
 @Entity
-@Table (name="tasks")
+@Table (name = "tasks")
 public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,11 +15,16 @@ public class Task {
     private Timestamp created;
     private boolean done;
 
-    public static Task of(String description) {
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    public static Task of(String description, User user) {
         Task task = new Task();
         task.description = description;
         task.created = new Timestamp(System.currentTimeMillis());
         task.done = false;
+        task.user = user;
         return task;
     }
 
@@ -53,6 +58,14 @@ public class Task {
 
     public void setDone(boolean done) {
         this.done = done;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     @Override

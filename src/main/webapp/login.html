@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Authorization</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script>
+        function validate() {
+            const email = $('#email');
+            const password = $('#password');
+            let message = "Введите "
+            if (email.val() === '') {
+                alert(message + email.attr("placeholder"));
+                return false;
+            }
+            if (password.val() === '') {
+                alert(message + password.attr("placeholder"));
+                return false;
+            }
+            return true;
+        }
+    </script>
+    <script type="text/javascript">
+        function authUser() {
+            if (validate()) {
+                $.ajax({
+                    type: 'POST',
+                    url: 'http://localhost:8086/TODO/auth',
+                    data: {email: $('#email').val(), password: $('#password').val()},
+                    dataType: 'json'
+                }).done(function (data) {
+                    if (data !== null) {
+                        alert("Вход выполнен... Добро пожаловать, " + data.name + "!");
+                        window.location.href = 'index.html';
+                    } else {
+                        alert("Неверный email или пароль! Попробуйте еще раз.")
+                    }
+                }).fail(function () {
+                    alert("При выполнении запроса произошла ошибка :(");
+                })
+            }
+        }
+    </script>
+</head>
+<body>
+<div class="container pt-3">
+    <div class="row">
+        <ul class="nav">
+            <li class="nav-item">
+                <a class="nav-link" href="http://localhost:8086/TODO/reg">Нет аккаунта? Жми...</a>
+            </li>
+        </ul>
+    </div>
+    <div class="row">
+        <div class="card" style="width: 100%">
+            <div class="card-header" style="margin-top:40px; color: cornflowerblue;">
+                <label for="email" style="font-size: large">Авторизация</label>
+            </div>
+            <div class="card-body">
+                <div class="form-group" style="margin-top:20px;">
+                    <label for="email">Почта</label>
+                    <input type="email" class="form-control" id="email" name="email"
+                           placeholder="адрес электронной почты...">
+                </div>
+                <div class="form-group">
+                    <label for="password">Пароль</label>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="пароль...">
+                </div>
+                <button type="submit" class="btn btn-primary" onclick="return authUser();">Войти</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -41,6 +41,7 @@
             let resolved = task.done === true ? "checked" : "";
             $('#table tr:last').after('<tr><td>' + task.description + '</td>'
                 + '<td>' + createdData + '</td>'
+                + '<td>' + task.user_id + '</td>'
                 + '<td>' + '<input class="checkbox" style="color: slateblue" type="checkbox" id="' + task.id
                 + '" name="done" onchange="changeDone(' + task.id + ')"' + resolved + '>'
                 + '<label></label>'
@@ -139,6 +140,7 @@
         <tr>
             <th>Описание</th>
             <th>Дата создания</th>
+            <th>Автор</th>
             <th>Выполнена</th>
         </tr>
         </thead>

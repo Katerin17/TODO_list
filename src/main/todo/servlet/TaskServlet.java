@@ -2,11 +2,13 @@ package main.todo.servlet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import main.todo.model.Task;
+import main.todo.model.User;
 import main.todo.store.TaskStore;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -27,7 +29,8 @@ public class TaskServlet extends HttpServlet {
         resp.setCharacterEncoding("UTF-8");
         resp.setContentType("application/json");
         TaskStore taskStore = new TaskStore();
-        Task task = Task.of(req.getParameter("description"));
+        HttpSession session = req.getSession();
+        Task task = Task.of(req.getParameter("description"), (User) session.getAttribute("user"));
         taskStore.add(task);
         PrintWriter writer = new PrintWriter(resp.getOutputStream());
         new ObjectMapper().writeValue(writer, task);

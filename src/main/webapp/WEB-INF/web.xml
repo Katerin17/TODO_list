@@ -13,6 +13,14 @@
     <servlet-name>DoneServlet</servlet-name>
     <servlet-class>main.todo.servlet.DoneServlet</servlet-class>
   </servlet>
+  <servlet>
+    <servlet-name>AuthServlet</servlet-name>
+    <servlet-class>main.todo.servlet.AuthServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>RegServlet</servlet-name>
+    <servlet-class>main.todo.servlet.RegServlet</servlet-class>
+  </servlet>
 
   <servlet-mapping>
     <servlet-name>TaskServlet</servlet-name>
@@ -22,8 +30,16 @@
     <servlet-name>DoneServlet</servlet-name>
     <url-pattern>/done</url-pattern>
   </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>AuthServlet</servlet-name>
+    <url-pattern>/auth</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>RegServlet</servlet-name>
+    <url-pattern>/reg</url-pattern>
+  </servlet-mapping>
 
   <welcome-file-list>
-    <welcome-file>index.html</welcome-file>
+    <welcome-file>login.html</welcome-file>
   </welcome-file-list>
 </web-app>
