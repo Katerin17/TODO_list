@@ -7,6 +7,7 @@ import org.hibernate.Transaction;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.hibernate.query.Query;
 
 import java.util.List;
 import java.util.function.Function;
@@ -45,15 +46,22 @@ public class TaskStore implements AutoCloseable {
     }
 
     public Task findById(int id) {
-        return this.wrapperTransaction(session -> session.get(Task.class, id));
+        return this.wrapperTransaction(session -> {
+            final Query<Task> query = session.createQuery(
+                    "select distinct t from main.todo.model.Task t left join fetch t.categories where t.id = :id", Task.class);
+            query.setParameter("id", id);
+            return query.getSingleResult();
+        });
     }
 
     public List<Task> findAll() {
-        return this.wrapperTransaction(session -> session.createQuery("from main.todo.model.Task", Task.class).list());
+        return this.wrapperTransaction(session -> session.createQuery(
+                "select distinct t from main.todo.model.Task t left join fetch t.categories", Task.class).list());
     }
 
     public List<Task> findNoDone() {
-        return this.wrapperTransaction(session -> session.createQuery("from main.todo.model.Task where done = false", Task.class).list());
+        return this.wrapperTransaction(session -> session.createQuery(
+                "select distinct t from main.todo.model.Task t left join fetch t.categories where t.done = false", Task.class).list());
     }
 
     @Override

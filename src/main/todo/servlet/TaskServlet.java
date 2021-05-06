@@ -1,8 +1,10 @@
 package main.todo.servlet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import main.todo.model.Category;
 import main.todo.model.Task;
 import main.todo.model.User;
+import main.todo.store.CategoryStore;
 import main.todo.store.TaskStore;
 
 import javax.servlet.http.HttpServlet;
@@ -31,6 +33,10 @@ public class TaskServlet extends HttpServlet {
         TaskStore taskStore = new TaskStore();
         HttpSession session = req.getSession();
         Task task = Task.of(req.getParameter("description"), (User) session.getAttribute("user"));
+        String[] arr = req.getParameter("categories").split(",");
+        for (String s: arr) {
+            task.addCategories(CategoryStore.instanceOf().findById(s));
+        }
         taskStore.add(task);
         PrintWriter writer = new PrintWriter(resp.getOutputStream());
         new ObjectMapper().writeValue(writer, task);

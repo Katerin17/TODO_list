@@ -11,3 +11,7 @@ CREATE TABLE users (
                         email TEXT,
                         password TEXT
 );
+CREATE TABLE categories (
+                       id SERIAL PRIMARY KEY,
+                       name TEXT
+);

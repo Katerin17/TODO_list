@@ -2,6 +2,8 @@ package main.todo.model;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -18,6 +20,9 @@ public class Task {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    List<Category> categories = new ArrayList<>();
 
     public static Task of(String description, User user) {
         Task task = new Task();
@@ -66,6 +71,14 @@ public class Task {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public List<Category> getCategories() {
+        return categories;
+    }
+
+    public void addCategories(Category category) {
+        categories.add(category);
     }
 
     @Override

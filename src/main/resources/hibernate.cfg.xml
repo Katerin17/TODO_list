@@ -19,5 +19,6 @@
 
         <mapping class="main.todo.model.Task" />
         <mapping class="main.todo.model.User" />
+        <mapping class="main.todo.model.Category" />
     </session-factory>
 </hibernate-configuration>
