@@ -1,15 +1,12 @@
 package main.todo.store;
 
 import main.todo.model.User;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
+import org.hibernate.*;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.query.Query;
 
-import java.util.List;
 import java.util.function.Function;
 
 public class UserStore implements AutoCloseable {
@@ -33,15 +30,19 @@ public class UserStore implements AutoCloseable {
     }
 
     public User add(User user) {
-        this.wrapperTransaction(session -> session.save(user));
-        return user;
+        try {
+            this.wrapperTransaction(session -> session.save(user));
+            return user;
+        } catch (IllegalStateException e) {
+            return null;
+        }
     }
 
-    public List<User> findByEmail(String email) {
+    public User findByEmail(String email) {
         return this.wrapperTransaction(session -> {
             final Query<User> query = session.createQuery("from main.todo.model.User where email = :email", User.class);
             query.setParameter("email", email);
-            return query.list();
+            return query.getSingleResult();
         });
     }
 

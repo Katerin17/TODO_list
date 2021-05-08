@@ -18,7 +18,7 @@ public class AuthServlet extends HttpServlet {
         String email = req.getParameter("email");
         String password = req.getParameter("password");
         UserStore userStore = new UserStore();
-        User currentUser = userStore.findByEmail(email.toLowerCase()).get(0);
+        User currentUser = userStore.findByEmail(email.toLowerCase());
         PrintWriter writer = new PrintWriter(resp.getOutputStream());
         ObjectMapper mapper = new ObjectMapper();
         if (currentUser != null && currentUser.getPassword().equals(password)) {

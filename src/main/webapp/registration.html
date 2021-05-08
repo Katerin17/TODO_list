@@ -38,10 +38,14 @@
                     data: {name: $('#name').val(), email: $('#email').val(), password: $('#password').val()},
                     dataType: 'json'
                 }).done(function (data) {
-                    alert("Пользователь " + data.name + " зарегистрирован.");
-                    window.location.href = 'http://localhost:8086/TODO/auth';
+                    if (data !== null) {
+                        alert("Пользователь " + data.name + " зарегистрирован.");
+                        window.location.href = 'http://localhost:8086/TODO/auth';
+                    } else {
+                        alert("Пользователь с таким email уже существует");
+                    }
                 }).fail(function () {
-                    alert("Возможно пользователь с таким email уже существует");
+                    alert("При выполнении запроса произошла ошибка :(");
                 })
             }
         }
