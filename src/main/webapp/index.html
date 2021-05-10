@@ -50,11 +50,17 @@
     </script>
     <script>
         function addRow(task) {
+            let categories = "";
+            for (let i = 0; i < task.categories.length; i++) {
+                categories += task.categories[i].name;
+                categories += "<br/>";
+            }
             const date = new Date(task.created);
             const createdData = date.getDate()+'-'+(date.getMonth()+1)+'-'+date.getFullYear()+' '
                 +date.getHours()+':'+date.getMinutes();
             let resolved = task.done === true ? "checked" : "";
             $('#table tr:last').after('<tr><td>' + task.description + '</td>'
+                + '<td>' + categories + '</td>'
                 + '<td>' + createdData + '</td>'
                 + '<td>' + task.user.name + '</td>'
                 + '<td>' + '<input class="checkbox" style="color: slateblue" type="checkbox" id="' + task.id
@@ -163,6 +169,7 @@
         <thead>
         <tr>
             <th>Описание</th>
+            <th>Категория</th>
             <th>Дата создания</th>
             <th>Автор</th>
             <th>Выполнена</th>
