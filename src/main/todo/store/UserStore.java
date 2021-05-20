@@ -5,6 +5,7 @@ import org.hibernate.*;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.hibernate.exception.ConstraintViolationException;
 import org.hibernate.query.Query;
 
 import java.util.function.Function;
@@ -18,8 +19,8 @@ public class UserStore implements AutoCloseable {
 
     private <T> T wrapperTransaction(final Function<Session, T> command) {
         final Session session = sf.openSession();
-        try (session) {
-            final Transaction transaction = session.beginTransaction();
+        final Transaction transaction = session.beginTransaction();
+        try {
             T result = command.apply(session);
             transaction.commit();
             return result;
@@ -33,14 +34,15 @@ public class UserStore implements AutoCloseable {
         try {
             this.wrapperTransaction(session -> session.save(user));
             return user;
-        } catch (IllegalStateException e) {
+        } catch (ConstraintViolationException e) {
             return null;
         }
     }
 
     public User findByEmail(String email) {
         return this.wrapperTransaction(session -> {
-            final Query<User> query = session.createQuery("from main.todo.model.User where email = :email", User.class);
+            final Query<User> query = session.createQuery(
+                    "from main.todo.model.User where email = :email", User.class);
             query.setParameter("email", email);
             return query.getSingleResult();
         });
