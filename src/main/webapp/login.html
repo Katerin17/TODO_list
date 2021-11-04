@@ -29,7 +29,7 @@
             if (validate()) {
                 $.ajax({
                     type: 'POST',
-                    url: 'http://localhost:8086/TODO/auth',
+                    url: 'https://sitara-todo-list.herokuapp.com/auth',
                     data: {email: $('#email').val(), password: $('#password').val()},
                     dataType: 'json'
                 }).done(function (data) {
@@ -51,7 +51,7 @@
     <div class="row">
         <ul class="nav">
             <li class="nav-item">
-                <a class="nav-link" href="http://localhost:8086/TODO/reg">Нет аккаунта? Жми...</a>
+                <a class="nav-link" href="https://sitara-todo-list.herokuapp.com/reg">Нет аккаунта? Жми...</a>
             </li>
         </ul>
     </div>

@@ -34,13 +34,13 @@
             if (validate()) {
                 $.ajax({
                     type: 'POST',
-                    url: 'http://localhost:8086/TODO/reg',
+                    url: 'https://sitara-todo-list.herokuapp.com/reg',
                     data: {name: $('#name').val(), email: $('#email').val(), password: $('#password').val()},
                     dataType: 'json'
                 }).done(function (data) {
                     if (data !== null) {
                         alert("Пользователь " + data.name + " зарегистрирован.");
-                        window.location.href = 'http://localhost:8086/TODO/auth';
+                        window.location.href = 'https://sitara-todo-list.herokuapp.com/auth';
                     } else {
                         alert("Пользователь с таким email уже существует");
                     }

@@ -12,7 +12,7 @@
         $(document).ready (function() {
             $.ajax({
                 type: "GET",
-                url: 'http://localhost:8086/TODO/categories',
+                url: 'https://sitara-todo-list.herokuapp.com/categories',
                 dataType: "json"
             }).done(function(data) {
                 for (let i = 0; i < data.length; i++) {
@@ -27,7 +27,7 @@
         $(document).ready (function() {
             $.ajax({
                 type: "GET",
-                url: 'http://localhost:8086/TODO/done',
+                url: 'https://sitara-todo-list.herokuapp.com/done',
                 dataType: "json"
             }).done(function(data) {
                 for (let i = 0; i < data.length; i++) {
@@ -73,7 +73,7 @@
         function changeDone(id) {
             $.ajax({
                 type: 'POST',
-                url: 'http://localhost:8086/TODO/done',
+                url: 'https://sitara-todo-list.herokuapp.com/done',
                 data: {id: id, check: $('#' + id).is(":checked")},
                 dataType: 'json'
             }).done(function (data) {
@@ -94,7 +94,7 @@
             if ($('#noDoneTasks').is(":checked")) {
                 $.ajax({
                     type: 'GET',
-                    url: 'http://localhost:8086/TODO/tasks',
+                    url: 'https://sitara-todo-list.herokuapp.com/tasks',
                     dataType: 'json'
                 }).done(function (data) {
                     for (let i = 0; i < data.length; i++) {
@@ -107,7 +107,7 @@
             else {
                 $.ajax({
                     type: 'GET',
-                    url: 'http://localhost:8086/TODO/done',
+                    url: 'https://sitara-todo-list.herokuapp.com/done',
                     dataType: 'json'
                 }).done(function (data) {
                     for (let i = 0; i < data.length; i++) {
@@ -128,7 +128,7 @@
               });
                 $.ajax({
                     type: 'POST',
-                    url: 'http://localhost:8086/TODO/tasks',
+                    url: 'https://sitara-todo-list.herokuapp.com/tasks',
                     data: { description : $('#description').val(), categories : str },
                     dataType: 'json'
                 }).done(function(data) {
